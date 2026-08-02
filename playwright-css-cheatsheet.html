@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Playwright CSS Locators – ściąga</title>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.5;
+      margin: 24px;
+      color: #111827;
+      background: #ffffff;
+    }
+    h1, h2 {
+      color: #0f172a;
+    }
+    .card {
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin-bottom: 14px;
+      background: #f9fafb;
+    }
+    code, pre {
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 14px;
+    }
+    pre {
+      background: #111827;
+      color: #f9fafb;
+      padding: 10px 12px;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    @media print {
+      body { margin: 12px; font-size: 12px; }
+      .card { break-inside: avoid; }
+      .grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Playwright – ściąga z CSS locators</h1>
+  <p>Przykładowe użycie: <code>page.locator('selector')</code></p>
+
+  <div class="card">
+    <h2>1. Najprostsze selektory</h2>
+    <pre>page.locator('button')
+page.locator('input')
+page.locator('a')</pre>
+    <p>Wybiera wszystkie elementy danego typu.</p>
+  </div>
+
+  <div class="card">
+    <h2>2. Selektor po id</h2>
+    <pre>page.locator('#login')</pre>
+    <p>Pasuje do elementu z atrybutem <code>id="login"</code>.</p>
+  </div>
+
+  <div class="card">
+    <h2>3. Selektor po klasie</h2>
+    <pre>page.locator('.btn-primary')</pre>
+    <p>Pasuje do elementów z klasą <code>btn-primary</code>.</p>
+  </div>
+
+  <div class="card">
+    <h2>4. Selektor po atrybucie</h2>
+    <pre>page.locator('[type="email"]')
+page.locator('[name="username"]')</pre>
+    <p>Wybiera elementy z konkretnym atrybutem.</p>
+  </div>
+
+  <div class="card">
+    <h2>5. Selektor po tag + atrybut</h2>
+    <pre>page.locator('input[type="text"]')
+button[type="submit"]</pre>
+    <p>Wybiera określony typ elementu z konkretnym atrybutem.</p>
+  </div>
+
+  <div class="card">
+    <h2>6. Potomek / dziecko</h2>
+    <pre>page.locator('form input')
+page.locator('div > span')</pre>
+    <p><code>form input</code> = wszystkie inputy w formularzu.<br><code>div > span</code> = bezpośredni dziecko <code>div</code>.</p>
+  </div>
+
+  <div class="card">
+    <h2>7. Pierwszy / ostatni / n-ty element</h2>
+    <pre>page.locator('li:first-child')
+page.locator('li:last-child')
+page.locator('li:nth-child(3)')</pre>
+    <p>Przydatne do list i tabel.</p>
+  </div>
+
+  <div class="card">
+    <h2>8. Wielokrotne klasy</h2>
+    <pre>page.locator('.btn.btn-danger')</pre>
+    <p>Pasuje do elementu, który ma obie klasy.</p>
+  </div>
+
+  <div class="card">
+    <h2>9. Selektory atrybutów z częściami wartości</h2>
+    <pre>page.locator('[href^="https"]')
+page.locator('[href$=".pdf"]')
+page.locator('[data-test*="user"]')</pre>
+    <p><code>^</code> = zaczyna się od, <code>$</code> = kończy się na, <code>*</code> = zawiera.</p>
+  </div>
+
+  <div class="card">
+    <h2>10. Pseudo-klasy</h2>
+    <pre>page.locator('input:enabled')
+page.locator('input:disabled')
+page.locator('button:focus')</pre>
+    <p>Przydatne do stanu elementu.</p>
+  </div>
+
+  <div class="card">
+    <h2>11. :has() – element zawiera coś</h2>
+    <pre>page.locator('form:has(input[type="submit"])')</pre>
+    <p>Wybiera element, który zawiera inny element.</p>
+  </div>
+
+  <div class="card">
+    <h2>12. Przykłady z Playwright</h2>
+    <pre>await page.locator('#email').fill('test@example.com');
+await page.locator('input[type="password"]').fill('secret');
+await page.locator('.btn-primary').click();
+await page.locator('form input').first().fill('Jan');</pre>
+  </div>
+
+  <div class="card">
+    <h2>13. Praktyczne przykłady</h2>
+    <pre>// formularz logowania
+await page.locator('input[name="username"]').fill('admin');
+await page.locator('input[type="password"]').fill('1234');
+await page.locator('button[type="submit"]').click();
+
+// przycisk po tekście
+await page.locator('button:has-text("Zapisz")').click();
+
+// element w konkretnym bloku
+await page.locator('form.login input').first().fill('Jan');
+
+// pierwszy element z listy
+await page.locator('li').first().click();
+
+// link z konkretnym href
+await page.locator('a[href="/kontakt"]').click();</pre>
+  </div>
+
+  <div class="card">
+    <h2>14. Najczęstsze wzorce</h2>
+    <div class="grid">
+      <div>
+        <strong>Po id</strong>
+        <pre>#menu</pre>
+      </div>
+      <div>
+        <strong>Po klasie</strong>
+        <pre>.error</pre>
+      </div>
+      <div>
+        <strong>Po atrybucie</strong>
+        <pre>[data-testid="save"]</pre>
+      </div>
+      <div>
+        <strong>Po tekście</strong>
+        <pre>button:has-text("Zapisz")</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>15. Przykłady dla tabel</h2>
+    <pre>// wybierz wiersz z konkretną wartością w kolumnie
+await page.locator('table tbody tr').filter({ hasText: 'Jan Kowalski' }).click();
+
+// wybierz komórkę z konkretnego wiersza
+await page.locator('table tbody tr').nth(2).locator('td').nth(1).click();
+
+// wybierz wszystkie wiersze
+await page.locator('table tbody tr').count();</pre>
+  </div>
+
+  <div class="card">
+    <h2>16. Przykłady dla checkboxów i radio</h2>
+    <pre>// zaznacz checkbox
+await page.locator('input[type="checkbox"]').check();
+
+// odznacz checkbox
+await page.locator('input[type="checkbox"]').uncheck();
+
+// wybierz radio z konkretną wartością
+await page.locator('input[type="radio"][value="male"]').check();
+
+// sprawdź, czy checkbox jest zaznaczony
+await page.locator('input[type="checkbox"]').isChecked();</pre>
+  </div>
+
+  <div class="card">
+    <h2>17. Wersja bardziej „lokatorowa” pod testy UI</h2>
+    <pre>// najlepszy styl: lokalizuj po data-testid
+await page.locator('[data-testid="username-input"]').fill('admin');
+await page.locator('[data-testid="password-input"]').fill('1234');
+await page.locator('[data-testid="login-button"]').click();
+
+// po id, jeśli jest unikalny
+await page.locator('#submit').click();
+
+// po tekście przycisku
+await page.locator('button:has-text("Zatwierdź")').click();
+
+// po zawartości bloku
+await page.locator('form:has(input[type="submit"])').isVisible();</pre>
+  </div>
+
+  <div class="card">
+    <h2>18. Szybka zasada</h2>
+    <p>Najlepiej wybierać elementy przez:</p>
+    <ul>
+      <li><code>data-testid</code> – najbardziej stabilne</li>
+      <li><code>id</code> – jeśli jest unikalny</li>
+      <li><code>class</code> – tylko gdy jest sensownie nazwany</li>
+      <li>zagnieżdżone selektory – gdy nie ma lepszego sposobu</li>
+    </ul>
+  </div>
+</body>
+</html>
