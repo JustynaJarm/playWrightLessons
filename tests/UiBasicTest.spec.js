@@ -43,7 +43,7 @@ import { test, expect } from '@playwright/test';
 //    await page.pause();
 //  });
 
- test.only('UI Controls', async ({page})=>
+ test ('UI Controls', async ({page})=>
  {
    await page.goto("https://rahulshettyacademy.com/loginpagePractise/");
    const userName = page.locator('#username');
@@ -60,4 +60,22 @@ import { test, expect } from '@playwright/test';
    await expect(documentLink).toHaveAttribute('class','blinkingText');
    await page.waitForTimeout(3000);
    await page.pause();
+ }); 
+
+  test.only('Child windows handle', async ({browser})=>
+ {
+   const context = await browser.newContext();
+   const page =  await context.newPage();
+   await page.goto("https://rahulshettyacademy.com/loginpagePractise/");
+   const documentLink = page.locator('a.blinkingText[href="https://rahulshettyacademy.com/documents-request"]');
+
+   const [newPage] = await Promise.all([
+   context.waitForEvent('page'),
+   documentLink.click(),
+   ])
+  
+   await newPage.waitForLoadState();
+   const text = await newPage.locator(".red").textContent();
+   console.log(text);
+
  }); 
