@@ -62,20 +62,26 @@ import { test, expect } from '@playwright/test';
    await page.pause();
  }); 
 
-  test.only('Child windows handle', async ({browser})=>
+  test ('Child windows handle', async ({browser})=>
  {
    const context = await browser.newContext();
    const page =  await context.newPage();
    await page.goto("https://rahulshettyacademy.com/loginpagePractise/");
    const documentLink = page.locator('a.blinkingText[href="https://rahulshettyacademy.com/documents-request"]');
 
-   const [newPage] = await Promise.all([
+   const [newPage,] = await Promise.all([
    context.waitForEvent('page'),
    documentLink.click(),
    ])
+   
   
    await newPage.waitForLoadState();
    const text = await newPage.locator(".red").textContent();
    console.log(text);
 
+   const arrayText = text.split("@");
+   const domain = arrayText[1].split(" ")[0];
+   console.log(domain);
+    await page.locator("#username").type(domain);
+    console.log(await page.locator("#username").inputValue());
  }); 
