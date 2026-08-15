@@ -1,14 +1,18 @@
 import { test, expect } from '@playwright/test';
 
 test.only('Client App', async ({ page }) => {
+    const email = 'jarmuljustyna@gmail.com';
     const productName = 'ZARA COAT 3';
     const products = page.locator('.card-body');
     await page.goto('https://rahulshettyacademy.com/client');
-    await page.locator('#userEmail').fill('anshika@gmail.com');
-    await page.locator('#userPassword').fill('Iamking@000');
+    await page.locator('#userEmail').fill(email);
+    await page.locator('#userPassword').fill('Playwright123!');
     await page.locator("[value='Login']").click();
     await page.waitForLoadState('networkidle');
-    await page.locator('.card-body').first().waitFor();
+
+    // wait for product cards to appear (login may redirect)
+    await expect(products.first()).toBeVisible({ timeout: 30000 });
+
     const titles = await page.locator('.card-body b').allTextContents();
     console.log(titles);
     const count = await products.count();
@@ -32,10 +36,31 @@ test.only('Client App', async ({ page }) => {
     }
 
     await page.locator("[routerlink*='cart']").click();
-    await page.locator('div li').first().waitFor();
-    const bool = page.locator("h3:has-text('ZARA COAT 3')").isVisible();
-    expect(bool).toBeTruthy();
+    await expect(page.locator('div li').first()).toBeVisible({ timeout: 10000 });
 
-   
-    // Zara coat 4
+    await expect(page.locator("h3:has-text('ZARA COAT 3')")).toBeVisible();
+
+    await page.locator('text=Checkout').click();
+
+    // type country and select from dropdown
+    const countryInput = page.locator("[placeholder*='Select Country']");
+    await countryInput.type('India', { delay: 100 });
+
+    const dropdown = page.locator('.ta-results');
+    await expect(dropdown).toBeVisible({ timeout: 10000 });
+    const optionsCount = await dropdown.locator('button').count();
+    for (let i = 0; i < optionsCount; ++i) {
+       const text = (await dropdown.locator('button').nth(i).textContent()) || '';
+       if (text.trim() === 'India') {
+          await dropdown.locator('button').nth(i).click();
+          break;
+       }
+    }
+
+    // assert shipping email value
+    await expect(page.locator(".user__name input[type='text']").first()).toHaveValue(email);
+    await page.locator('.action__submit').click();
+    await expect(page.locator('.hero-primary')).toHaveText(' Thankyou for the order. ');
+    const orderId = await page.locator('.em-spacer-1 .ng-star-inserted').textContent();
+    console.log(orderId);
 });
