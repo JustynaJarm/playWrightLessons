@@ -57,10 +57,18 @@ test.only('Client App', async ({ page }) => {
        }
     }
 
-    // assert shipping email value
-    await expect(page.locator(".user__name input[type='text']").first()).toHaveValue(email);
-    await page.locator('.action__submit').click();
+        // assert shipping email value
+        await expect(page.locator(".user__name input[type='text']").first()).toHaveValue(email);
+        await page.locator('.action__submit').click();
+
+        
     await expect(page.locator('.hero-primary')).toHaveText(' Thankyou for the order. ');
-    const orderId = await page.locator('.em-spacer-1 .ng-star-inserted').textContent();
-    console.log(orderId);
+    const rawOrderText = (await page.locator('.em-spacer-1 .ng-star-inserted').textContent()) || '';
+    const match = rawOrderText.match(/([A-Za-z0-9-]{6,})/);
+    const orderId = match ? match[1].trim() : rawOrderText.trim();
+    console.log('orderId=', orderId);
+
+    await page.locator('button[routerlink*="myorders"]').click();
+    await page.waitForSelector('table', { timeout: 30000 });
+    await expect(page.locator('table')).toContainText(orderId, { timeout: 30000 });
 });
