@@ -9,11 +9,12 @@ export default defineConfig({
   reporter: [['list'], ['html', { outputFolder: 'playwright-report' }]],
   use: {
     headless: false,
-    actionTimeout: 10_000,
-    navigationTimeout: 20_000,
-    trace: 'on-first-retry',
-    screenshot: 'only-on-failure',
+    actionTimeout: 15_000,
+    navigationTimeout: 30_000,
+    trace: 'on',
+    screenshot: 'on',
     video: 'retain-on-failure',
+    
   },
   projects: [
     {

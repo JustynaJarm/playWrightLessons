@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test.only('Client App', async ({ page }) => {
+test ('Client App', async ({ page }) => {
     const email = 'jarmuljustyna@gmail.com';
     const productName = 'ZARA COAT 3';
     const products = page.locator('.card-body');
